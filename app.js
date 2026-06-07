@@ -16,6 +16,7 @@ const CATEGORIES = {
 let state = {
   expenses: [],
   dailyBudget: 50.00,
+  monthlyIncome: 1500.00,
   selectedCategory: 'food',
   currentFilter: 'all',
   searchQuery: ''
@@ -27,8 +28,17 @@ const todaySpendEl = document.getElementById('today-spend');
 const dailyBudgetValEl = document.getElementById('daily-budget-val');
 const budgetProgressEl = document.getElementById('budget-progress');
 const budgetStatusEl = document.getElementById('budget-status');
-const monthlySpendEl = document.getElementById('monthly-spend');
 const budgetCard = document.querySelector('.stat-card.budget');
+
+// Monthly income & balance elements
+const monthlyBalanceValEl = document.getElementById('monthly-balance-val');
+const monthlyBreakdownEl = document.getElementById('monthly-breakdown');
+const monthlyBalanceCard = document.getElementById('monthly-balance-card');
+const editIncomeBtn = document.getElementById('edit-income-btn');
+const incomeModal = document.getElementById('income-modal');
+const incomeInput = document.getElementById('income-input');
+const incomeSaveBtn = document.getElementById('income-save');
+const incomeCancelBtn = document.getElementById('income-cancel');
 
 const expenseForm = document.getElementById('expense-form');
 const amountInput = document.getElementById('amount');
@@ -79,6 +89,7 @@ function setDefaultDate() {
 function loadLocalStorage() {
   const storedExpenses = localStorage.getItem('spendid_expenses');
   const storedBudget = localStorage.getItem('spendid_daily_budget');
+  const storedIncome = localStorage.getItem('spendid_monthly_income');
   
   if (storedExpenses) {
     try {
@@ -92,6 +103,10 @@ function loadLocalStorage() {
   if (storedBudget) {
     state.dailyBudget = parseFloat(storedBudget) || 50.00;
   }
+
+  if (storedIncome) {
+    state.monthlyIncome = parseFloat(storedIncome) || 1500.00;
+  }
 }
 
 // Save data to LocalStorage
@@ -99,8 +114,14 @@ function saveExpenses() {
   localStorage.setItem('spendid_expenses', JSON.stringify(state.expenses));
 }
 
+// Save budget configuration
 function saveBudget() {
   localStorage.setItem('spendid_daily_budget', state.dailyBudget.toString());
+}
+
+// Save monthly income configuration
+function saveIncome() {
+  localStorage.setItem('spendid_monthly_income', state.monthlyIncome.toString());
 }
 
 // ==========================================================================
@@ -199,6 +220,34 @@ function setupEventListeners() {
   budgetModal.addEventListener('click', (e) => {
     if (e.target === budgetModal) {
       budgetModal.classList.add('hidden');
+    }
+  });
+
+  // Income Modal triggers
+  editIncomeBtn.addEventListener('click', () => {
+    incomeInput.value = state.monthlyIncome.toFixed(0);
+    incomeModal.classList.remove('hidden');
+    incomeInput.focus();
+  });
+
+  incomeCancelBtn.addEventListener('click', () => {
+    incomeModal.classList.add('hidden');
+  });
+
+  incomeSaveBtn.addEventListener('click', () => {
+    const newIncome = parseFloat(incomeInput.value);
+    if (!isNaN(newIncome) && newIncome > 0) {
+      state.monthlyIncome = newIncome;
+      saveIncome();
+      renderStats();
+      incomeModal.classList.add('hidden');
+    }
+  });
+
+  // Close modal when clicking outside
+  incomeModal.addEventListener('click', (e) => {
+    if (e.target === incomeModal) {
+      incomeModal.classList.add('hidden');
     }
   });
 }
@@ -325,7 +374,6 @@ function renderStats() {
   // Update UI values
   todaySpendEl.textContent = formatCurrency(todaySpend);
   dailyBudgetValEl.textContent = formatCurrency(state.dailyBudget);
-  monthlySpendEl.textContent = formatCurrency(monthlySpend);
 
   // Budget progress logic
   const budgetRatio = Math.min(todaySpend / state.dailyBudget, 1.0);
@@ -342,6 +390,20 @@ function renderStats() {
     const remaining = state.dailyBudget - todaySpend;
     budgetStatusEl.textContent = `${formatCurrency(remaining)} remaining today`;
     budgetStatusEl.style.color = 'var(--text-muted)';
+  }
+
+  // Monthly balance calculations (Income - Monthly Spend)
+  const monthlyBalance = state.monthlyIncome - monthlySpend;
+  monthlyBalanceValEl.textContent = formatCurrency(monthlyBalance);
+  monthlyBreakdownEl.textContent = `Income: ${formatCurrency(state.monthlyIncome)} | Spent: ${formatCurrency(monthlySpend)}`;
+
+  // Set surplus/deficit visual states
+  if (monthlyBalance >= 0) {
+    monthlyBalanceCard.classList.add('surplus');
+    monthlyBalanceCard.classList.remove('deficit');
+  } else {
+    monthlyBalanceCard.classList.add('deficit');
+    monthlyBalanceCard.classList.remove('surplus');
   }
 }
 
