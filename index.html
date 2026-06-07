@@ -46,9 +46,15 @@
           </div>
           <span class="progress-caption" id="budget-status">100% remaining</span>
         </div>
-        <div class="stat-card monthly">
-          <span class="stat-label">This Month</span>
-          <span class="stat-value" id="monthly-spend">$0.00</span>
+        <div class="stat-card monthly-balance" id="monthly-balance-card">
+          <div class="stat-header">
+            <span class="stat-label">Monthly Balance</span>
+            <button class="edit-budget-btn" id="edit-income-btn" title="Set Monthly Income">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </button>
+          </div>
+          <span class="stat-value" id="monthly-balance-val">$1,500.00</span>
+          <span class="progress-caption" id="monthly-breakdown">Income: $1,500.00 | Spent: $0.00</span>
         </div>
       </div>
     </header>
@@ -182,6 +188,24 @@
       <div class="modal-actions">
         <button class="modal-btn cancel" id="budget-cancel">Cancel</button>
         <button class="modal-btn save" id="budget-save">Save Limit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Income Settings Modal -->
+  <div class="modal-overlay hidden" id="income-modal">
+    <div class="modal glass-panel">
+      <h3 class="modal-title">Set Monthly Income</h3>
+      <p class="modal-desc">Configure your monthly income to calculate remaining balance.</p>
+      <div class="input-group amount-group">
+        <div class="amount-input-wrapper">
+          <span class="currency-symbol">$</span>
+          <input type="number" id="income-input" step="1" min="1" placeholder="1500.00">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="income-cancel">Cancel</button>
+        <button class="modal-btn save" id="income-save">Save Income</button>
       </div>
     </div>
   </div>

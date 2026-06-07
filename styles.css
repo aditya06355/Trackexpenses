@@ -938,3 +938,21 @@ input[type="text"]:focus, input[type="date"]:focus {
   transform: translateY(-8px);
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
+
+/* Monthly Balance Accent Styles */
+.stat-card.monthly-balance::before {
+  background: var(--text-secondary);
+}
+.stat-card.monthly-balance.surplus::before {
+  background: var(--success);
+}
+.stat-card.monthly-balance.deficit::before {
+  background: var(--danger);
+}
+.stat-card.monthly-balance.surplus #monthly-balance-val {
+  color: var(--success);
+}
+.stat-card.monthly-balance.deficit #monthly-balance-val {
+  color: var(--danger);
+}
+
