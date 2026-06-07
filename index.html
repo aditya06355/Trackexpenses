@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spendid - Daily Expense Tracker</title>
+  <meta name="description" content="A simple, premium, and clean daily expense tracker to monitor your spending effortlessly every day.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Main Dashboard Header -->
+    <header class="app-header">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h1>Spendid</h1>
+        </div>
+        <div class="date-display" id="current-date">Sunday, June 7</div>
+      </div>
+      
+      <!-- Stats Summary Widget -->
+      <div class="stats-grid">
+        <div class="stat-card spend">
+          <span class="stat-label">Today's Spend</span>
+          <span class="stat-value" id="today-spend">$0.00</span>
+        </div>
+        <div class="stat-card budget">
+          <div class="stat-header">
+            <span class="stat-label">Daily Budget</span>
+            <button class="edit-budget-btn" id="edit-budget-btn" title="Set Daily Budget">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </button>
+          </div>
+          <span class="stat-value" id="daily-budget-val">$50.00</span>
+          <!-- Progress bar -->
+          <div class="progress-container">
+            <div class="progress-bar" id="budget-progress" style="width: 0%"></div>
+          </div>
+          <span class="progress-caption" id="budget-status">100% remaining</span>
+        </div>
+        <div class="stat-card monthly">
+          <span class="stat-label">This Month</span>
+          <span class="stat-value" id="monthly-spend">$0.00</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="app-content">
+      <!-- Left Column: Input Form -->
+      <section class="form-section glass-panel">
+        <h2 class="section-title">Log New Expense</h2>
+        <form id="expense-form" autocomplete="off">
+          <!-- Amount Input -->
+          <div class="input-group amount-group">
+            <label for="amount">Amount ($)</label>
+            <div class="amount-input-wrapper">
+              <span class="currency-symbol">$</span>
+              <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
+            </div>
+            <!-- Quick Add buttons -->
+            <div class="quick-amounts">
+              <button type="button" class="quick-btn" data-val="5">+$5</button>
+              <button type="button" class="quick-btn" data-val="10">+$10</button>
+              <button type="button" class="quick-btn" data-val="25">+$25</button>
+              <button type="button" class="quick-btn" data-val="50">+$50</button>
+            </div>
+          </div>
+
+          <!-- Description Input -->
+          <div class="input-group">
+            <label for="description">Note / Description</label>
+            <input type="text" id="description" placeholder="e.g. Lunch with team, Taxi, Groceries" required>
+          </div>
+
+          <!-- Category Selector -->
+          <div class="input-group">
+            <label>Category</label>
+            <div class="category-grid" id="category-selector">
+              <!-- Categories will be rendered dynamically with state but let's hardcode them for structure -->
+              <div class="category-pill active" data-category="food" style="--accent: var(--cat-food)">
+                <span class="pill-icon">🍔</span>
+                <span class="pill-name">Food</span>
+              </div>
+              <div class="category-pill" data-category="transport" style="--accent: var(--cat-transport)">
+                <span class="pill-icon">🚗</span>
+                <span class="pill-name">Transport</span>
+              </div>
+              <div class="category-pill" data-category="shopping" style="--accent: var(--cat-shopping)">
+                <span class="pill-icon">🛍️</span>
+                <span class="pill-name">Shopping</span>
+              </div>
+              <div class="category-pill" data-category="bills" style="--accent: var(--cat-bills)">
+                <span class="pill-icon">💳</span>
+                <span class="pill-name">Bills</span>
+              </div>
+              <div class="category-pill" data-category="entertainment" style="--accent: var(--cat-entertainment)">
+                <span class="pill-icon">🎬</span>
+                <span class="pill-name">Leisure</span>
+              </div>
+              <div class="category-pill" data-category="other" style="--accent: var(--cat-other)">
+                <span class="pill-icon">📦</span>
+                <span class="pill-name">Other</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Input (defaults to today, toggleable) -->
+          <div class="input-group date-group">
+            <div class="date-header">
+              <label for="expense-date">Date</label>
+              <button type="button" class="toggle-date-btn" id="toggle-date-btn">
+                Change Date
+              </button>
+            </div>
+            <input type="date" id="expense-date" class="hidden">
+          </div>
+
+          <!-- Add Button -->
+          <button type="submit" class="submit-btn" id="submit-btn">
+            <span>Add Expense</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14"/></svg>
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: List & History -->
+      <section class="history-section glass-panel">
+        <div class="history-header">
+          <h2 class="section-title">Transactions</h2>
+          <!-- Simple Search/Filter Trigger -->
+          <div class="search-wrapper">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="search-input" placeholder="Search note...">
+          </div>
+        </div>
+
+        <!-- Filter category pills in history -->
+        <div class="filter-bar">
+          <button class="filter-pill active" data-filter="all">All</button>
+          <button class="filter-pill" data-filter="food">Food</button>
+          <button class="filter-pill" data-filter="transport">Transport</button>
+          <button class="filter-pill" data-filter="shopping">Shopping</button>
+          <button class="filter-pill" data-filter="bills">Bills</button>
+          <button class="filter-pill" data-filter="entertainment">Leisure</button>
+          <button class="filter-pill" data-filter="other">Other</button>
+        </div>
+
+        <!-- Scrollable list of expenses -->
+        <div class="expenses-scroll-container" id="expenses-list">
+          <!-- JavaScript will dynamically render grouped items here -->
+          <!-- Empty State -->
+          <div class="empty-state" id="empty-state">
+            <div class="empty-icon">💸</div>
+            <h3>No expenses logged yet</h3>
+            <p>Enter an amount and category above to track your spending.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Budget Settings Modal -->
+  <div class="modal-overlay hidden" id="budget-modal">
+    <div class="modal glass-panel">
+      <h3 class="modal-title">Set Daily Budget</h3>
+      <p class="modal-desc">Configure your daily spending limit to track target progress.</p>
+      <div class="input-group amount-group">
+        <div class="amount-input-wrapper">
+          <span class="currency-symbol">$</span>
+          <input type="number" id="budget-input" step="1" min="1" placeholder="50.00">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="budget-cancel">Cancel</button>
+        <button class="modal-btn save" id="budget-save">Save Limit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript logic -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "spendid-expense-tracker",
+  "version": "1.0.0",
+  "description": "A clean, modern daily expense tracker with glassmorphic UI.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx -y http-server -p 3000",
+    "dev": "npx -y http-server -p 3000"
+  },
+  "keywords": [
+    "expense-tracker",
+    "budget",
+    "finance",
+    "glassmorphism",
+    "dark-mode"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}
